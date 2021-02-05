@@ -2,7 +2,6 @@
 # ticker_tests.py
 
 import json
-import os
 import unittest
 
 from selenium import webdriver
