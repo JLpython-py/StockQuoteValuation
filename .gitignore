@@ -1,2 +1,4 @@
 virtualenv/
 .idea/
+sqv/__pycache__/
+geckodriver.log
