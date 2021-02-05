@@ -28,8 +28,8 @@ class TickerSearch:
         self.browser = webdriver.Firefox(
             options=options
         )
-        address = "https://www.marketwatch.com/tools/quotes/lookup.asp"
-        self.browser.get(address)
+        self.address = "https://www.marketwatch.com/tools/quotes/lookup.asp"
+        self.browser.get(self.address)
         self.etree = None
 
     class OptionNotFoundError(Exception):
@@ -45,10 +45,22 @@ class TickerSearch:
             self.message = f"Could not find '{self.option}' for '{self.field}'"
             super().__init__(f"{self.message} ({options})")
 
+    class ParsingError(Exception):
+        """ Raised for errors in TickerSearch.retrieve when scraping table
+"""
+        def __init__(self):
+            self.message = f"Resulting page cannot be parsed"
+            super().__init__(self.message)
+
     def end(self):
         """ Call `quit` method of `self.browser`
 """
         self.browser.quit()
+
+    def reset(self):
+        """ Navigate browser to original page
+"""
+        self.browser.get(self.address)
 
     def search(self, *, name, country="United States", security="All"):
         """ Fill out Symbol Lookup search query
@@ -98,7 +110,14 @@ class TickerSearch:
             self.fields.get('search')
         ).click()
 
-    def retrieve(self, limit=25):
+    def retrieve(self, limit=None):
+        """ Return data contained in table returned by search (Order: A-Za-z)
+
+        Arguments:
+              limit -- The maximum number of items returned
+"""
+        if self.browser.title != "Stock Ticker Symbol Lookup - MarketWatch":
+            raise self.ParsingError()
         results = {}
         # Create XPath parser for current URL
         response = urllib.request.urlopen(self.browser.current_url)
@@ -110,8 +129,12 @@ class TickerSearch:
         headings = [c.text for c in raw_headings[0].getchildren()]
         raw_rows = tree.xpath(
             "/html/body/div[1]/div[3]/div[2]/div[1]/div/table/tbody/tr"
-        )[:limit]
-        for row in raw_rows:
+        )
+        if limit is not None:
+            splice = raw_rows[:limit]
+        else:
+            splice = raw_rows[:]
+        for row in splice:
             items = []
             for des in row.iterdescendants():
                 if des.text is None:
