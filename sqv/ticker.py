@@ -3,7 +3,9 @@
 
 import json
 import logging
+import urllib.request
 
+from lxml import etree
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
 
@@ -28,6 +30,7 @@ class TickerSearch:
         )
         address = "https://www.marketwatch.com/tools/quotes/lookup.asp"
         self.browser.get(address)
+        self.etree = None
 
     class OptionNotFoundError(Exception):
         """ Raised for errors in TickerSearch.search while searching for ticker
@@ -94,3 +97,28 @@ class TickerSearch:
         self.browser.find_element_by_css_selector(
             self.fields.get('search')
         ).click()
+
+    def retrieve(self, limit=25):
+        results = {}
+        # Create XPath parser for current URL
+        response = urllib.request.urlopen(self.browser.current_url)
+        htmlparser = etree.HTMLParser()
+        tree = etree.parse(response, htmlparser)
+        raw_headings = tree.xpath(
+            "/html/body/div[1]/div[3]/div[2]/div[1]/div/table/thead/tr"
+        )
+        headings = [c.text for c in raw_headings[0].getchildren()]
+        raw_rows = tree.xpath(
+            "/html/body/div[1]/div[3]/div[2]/div[1]/div/table/tbody/tr"
+        )[:limit]
+        for row in raw_rows:
+            items = []
+            for des in row.iterdescendants():
+                if des.text is None:
+                    continue
+                items.append(des.text)
+            data = dict(zip(headings, items))
+            results.setdefault(
+                data["Company"], data
+            )
+        return results
