@@ -24,6 +24,12 @@ class TestSQVTicker(unittest.TestCase):
             self.ticker.search(name="Apple", security="Nonexistent option")
         self.ticker.reset()
 
+        # Search query with no results
+        with self.assertRaises(sqv.ticker.TickerSearch.ParsingError):
+            self.ticker.search(name="abcdefghijklmnopqrstuvwxyz")
+            self.ticker.retrieve()
+        self.ticker.reset()
+
         # Searching with ticker results in page which cannot be parsed
         with self.assertRaises(sqv.ticker.TickerSearch.ParsingError):
             self.ticker.search(name="AAPL")
@@ -43,8 +49,8 @@ class TestSQVTicker(unittest.TestCase):
             results,
         )
         self.assertIn(
-            "Apple, Inc.",
-            results
+            "Apple Inc.",
+            list(results)
         )
 
 

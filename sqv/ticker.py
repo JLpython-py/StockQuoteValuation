@@ -49,7 +49,7 @@ class TickerSearch:
         """ Raised for errors in TickerSearch.retrieve when scraping table
 """
         def __init__(self):
-            self.message = f"Resulting page cannot be parsed"
+            self.message = "Resulting page cannot be parsed."
             super().__init__(self.message)
 
     def end(self):
@@ -126,6 +126,8 @@ class TickerSearch:
         raw_headings = tree.xpath(
             "/html/body/div[1]/div[3]/div[2]/div[1]/div/table/thead/tr"
         )
+        if len(raw_headings) == 0:
+            raise self.ParsingError()
         headings = [c.text for c in raw_headings[0].getchildren()]
         raw_rows = tree.xpath(
             "/html/body/div[1]/div[3]/div[2]/div[1]/div/table/tbody/tr"
