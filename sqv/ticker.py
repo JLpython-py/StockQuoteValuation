@@ -2,17 +2,12 @@
 # ticker.py
 
 import json
-import logging
 import urllib.request
 
+from fuzzywuzzy import process
 from lxml import etree
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
-
-logging.basicConfig(
-    level=logging.INFO,
-    format=" %(asctime)s - %(levelname)s - %(message)s"
-)
 
 
 class TickerSearch:
@@ -147,3 +142,12 @@ class TickerSearch:
                 data["Company"], data
             )
         return results
+
+    def match(self, *, name):
+        """ Returns the result which best matches the <name> argument
+"""
+        results = self.retrieve()
+        res = process.extractOne(
+            name.title(), list(results.keys())
+        )
+        return res[0], results[res[0]]

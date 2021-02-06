@@ -43,7 +43,7 @@ class TestSQVTicker(unittest.TestCase):
             self.original_address
         )
 
-        # Retrieve table results
+        # Retrieve table results for search query
         results = self.ticker.retrieve()
         self.assertTrue(
             results,
@@ -51,6 +51,23 @@ class TestSQVTicker(unittest.TestCase):
         self.assertIn(
             "Apple Inc.",
             list(results)
+        )
+
+        # Retrieve best match for search query
+        match = self.ticker.match(name="Apple Inc.")
+        self.assertEqual(
+            "Apple Inc.",
+            match[0]
+        )
+        self.assertIsInstance(
+            match[1], dict
+        )
+        self.assertEqual(
+            match,
+            (
+                "Apple Inc.",
+                {"Symbol": "AAPL", "Company": "Apple Inc.", "Exchange": "NAS"}
+            )
         )
 
 

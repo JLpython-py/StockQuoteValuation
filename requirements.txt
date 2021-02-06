@@ -1,3 +1,5 @@
+fuzzywuzzy==0.18.0
 lxml==4.6.2
+python-Levenshtein-wheels==0.13.2
 selenium==3.141.0
 urllib3==1.26.3
