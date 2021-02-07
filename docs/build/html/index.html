@@ -5,34 +5,192 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Welcome to StockQuoteValuation’s documentation! &#8212; StockQuoteValuation  documentation</title>
+    <title>StockQuoteValuation Documentation &#8212; StockQuoteValuation  documentation</title>
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
+    
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-   
-  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
-  
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
-
+    <link rel="search" title="Search" href="search.html" /> 
   </head><body>
-  
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="#">StockQuoteValuation  documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">StockQuoteValuation Documentation</a></li> 
+      </ul>
+    </div>  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          
-
           <div class="body" role="main">
             
-  <div class="section" id="welcome-to-stockquotevaluation-s-documentation">
-<h1>Welcome to StockQuoteValuation’s documentation!<a class="headerlink" href="#welcome-to-stockquotevaluation-s-documentation" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="stockquotevaluation-documentation">
+<h1>StockQuoteValuation Documentation<a class="headerlink" href="#stockquotevaluation-documentation" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
+</div>
+<p>SQV is an open-source project.</p>
+<p>See this project’s <a class="reference external" href="https://github.com/JLpython-py/StockQuoteValuation">GitHub Repository</a> or the <a class="reference external" href="https://github.com/JLpython-py/StockQuoteValuation/releases">latest releases</a>.</p>
+<div class="section" id="sqv-ticker">
+<h2>SQV.ticker<a class="headerlink" href="#sqv-ticker" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt>
+<code class="sig-name descname">class sqv.ticker.TickerSearch</code></dt>
+<dd><dl class="py method">
+<dt id="TickerSearch.__init__">
+<em class="property">classmethod </em><code class="sig-prename descclassname">TickerSearch.</code><code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#TickerSearch.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py attribute">
+<dt id="TickerSearch.fields">
+<code class="sig-name descname">fields</code><a class="headerlink" href="#TickerSearch.fields" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+<p>A dictionary mapping the webpage search query fields to the corresponding CSS selector</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="options">
+<code class="sig-name descname">options</code><a class="headerlink" href="#options" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+<p>A dictionary mapping the webpage search query field options to the corresponding CSS selector</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="browser">
+<code class="sig-name descname">browser</code><a class="headerlink" href="#browser" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://selenium-python.readthedocs.io/api.html#webdriver-api">selenium.webdriver.firefox.webdriver.WebDriver</a></p>
+</dd>
+</dl>
+<p>A Selenium Firefox browser used to navigate the webpage at <code class="docutils literal notranslate"><span class="pre">address</span></code></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="address">
+<code class="sig-name descname">address</code><a class="headerlink" href="#address" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+<p>The address to the <a class="reference external" href="https://www.marketwatch.com/tools/quotes/lookup.asp">MarketWatch Ticker Lookup tool</a></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt id="sqv.ticker.TickerSearch.OptionNotFoundError">
+<em class="property">exception </em><code class="sig-prename descclassname">sqv.ticker.TickerSearch.</code><code class="sig-name descname">OptionNotFoundError</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">Exception</span></em>, <em class="sig-param"><span class="n">field</span></em>, <em class="sig-param"><span class="n">option</span></em>, <em class="sig-param"><span class="n">options</span></em><span class="sig-paren">)</span><a class="headerlink" href="#sqv.ticker.TickerSearch.OptionNotFoundError" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>field</strong> (<em>str</em>) – The search query field which the user attempted to modify</p></li>
+<li><p><strong>option</strong> (<em>str</em>) – The option which the user tried to set the <code class="docutils literal notranslate"><span class="pre">field</span></code> argument to</p></li>
+<li><p><strong>options</strong> (<em>list</em>) – A list of options (titlecase) to which the <code class="docutils literal notranslate"><span class="pre">field</span></code> argument can be set to</p></li>
+</ul>
+</dd>
+</dl>
+<p>Raised when a search query field cannot be set to the passed option</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt id="sqv.ticker.TickerSearch.ParsingError">
+<em class="property">exception </em><code class="sig-prename descclassname">sqv.ticker.TickerSearch.</code><code class="sig-name descname">ParsingError</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">Exception</span></em><span class="sig-paren">)</span><a class="headerlink" href="#sqv.ticker.TickerSearch.ParsingError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raised when a resulting search query page cannot be parsed for the contained data.
+There are two common scenarios in which this error is raised:</p>
+<ol class="arabic simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">name</span></code> argument passed is a valid ticker, causing the page to redirect to the stock quote</p></li>
+<li><p>The search criteria result in no results.</p></li>
+</ol>
+</dd></dl>
+
+<dl class="py method">
+<dt id="end">
+<em class="property">classmethod </em><code class="sig-name descname">end</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#end" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calls the <code class="docutils literal notranslate"><span class="pre">quit</span></code> classmethod of :py:attr:browser</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="reset">
+<em class="property">classmethod </em><code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calls the <code class="docutils literal notranslate"><span class="pre">get</span></code> classmethod of :py:attr:browser, passing :py:attr:address</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="search">
+<em class="property">classmethod </em><code class="sig-name descname">search</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">country</span><span class="o">=</span><span class="default_value">'United States'</span></em>, <em class="sig-param"><span class="n">security</span><span class="o">=</span><span class="default_value">'All'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#search" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – The search term</p></li>
+<li><p><strong>country</strong> (<em>str</em>) – The country of the security</p></li>
+<li><p><strong>security</strong> (<em>str</em>) – The type of security</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#sqv.ticker.TickerSearch.OptionNotFoundError" title="sqv.ticker.TickerSearch.OptionNotFoundError"><strong>sqv.ticker.TickerSearch.OptionNotFoundError</strong></a> – If either the <strong>country</strong> or <strong>security</strong> field cannot be set to the value passed to the respective <code class="docutils literal notranslate"><span class="pre">country</span></code> and/or <code class="docutils literal notranslate"><span class="pre">security</span></code> parameters</p>
+</dd>
+</dl>
+<p>Fills out the search query fields on the webpage
+The arguments passed are entered into the corresponding fields by <a class="reference internal" href="#browser" title="browser"><code class="xref py py-attr docutils literal notranslate"><span class="pre">browser</span></code></a>, then the <strong>SEARCH</strong> button is clicked</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="retrieve">
+<em class="property">classmethod </em><code class="sig-name descname">retrieve</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">limit</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#retrieve" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>limit</strong> (<em>int</em>) – The maximum length of the returned dictionary, or, when <code class="docutils literal notranslate"><span class="pre">None</span></code>, all results will be returned</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dictionary of nested dictionaries containing the data in the table returned by the search query</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#sqv.ticker.TickerSearch.ParsingError" title="sqv.ticker.TickerSearch.ParsingError"><strong>sqv.ticker.TickerSearch.ParsingError</strong></a> – If the webpage resulting from the search query cannot be parsed for ticker data</p>
+</dd>
+</dl>
+<p>Parses the current page to extract the data contained in the table returned by the search query
+Data is ordered in the dictionary A-Z-a-z</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="match">
+<em class="property">classmethod </em><code class="sig-name descname">match</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#match" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – The search term</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The name of the best match and the corresponding dictionary of the best match</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+<p>Calls <a class="reference internal" href="#retrieve" title="retrieve"><code class="xref py py-meth docutils literal notranslate"><span class="pre">retrieve()</span></code></a> for a dictionary of possible matches (<code class="docutils literal notranslate"><span class="pre">results</span></code>).
+Calls the <code class="docutils literal notranslate"><span class="pre">extractOne</span></code> function of the <a class="reference external" href="https://pypi.org/project/fuzzywuzzy/">fuzzywuzzy.process</a>, passing <code class="docutils literal notranslate"><span class="pre">name</span></code> (titlecase) and <code class="docutils literal notranslate"><span class="pre">list(results)</span></code>.</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 </div>
 <div class="section" id="indices-and-tables">
@@ -45,30 +203,28 @@
 </div>
 
 
+            <div class="clearer"></div>
           </div>
-          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="#">StockQuoteValuation</a></h1>
-
-
-
-
-
-
-
-
-<h3>Navigation</h3>
-
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="#">Documentation overview</a><ul>
-  </ul></li>
+  <h3><a href="#">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">StockQuoteValuation Documentation</a><ul>
+<li><a class="reference internal" href="#sqv-ticker">SQV.ticker</a></li>
 </ul>
-</div>
+</li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
 <div id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
@@ -79,32 +235,23 @@
     </div>
 </div>
 <script>$('#searchbox').show(0);</script>
-
-
-
-
-
-
-
-
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="footer">
-      &copy;2021, Jacob Lee.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.4.3</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
-      
-      |
-      <a href="_sources/index.rst.txt"
-          rel="nofollow">Page source</a>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="#">StockQuoteValuation  documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">StockQuoteValuation Documentation</a></li> 
+      </ul>
     </div>
-
-    
-
-    
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Jacob Lee.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.4.3.
+    </div>
   </body>
 </html>
