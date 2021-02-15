@@ -6,8 +6,9 @@
 """
 
 import logging
+from urllib.request import urlopen
 
-import openpyxl
+from lxml import etree
 
 logging.basicConfig(
     level=logging.INFO,
@@ -15,18 +16,65 @@ logging.basicConfig(
 )
 
 
+URL = "https://apps.cnbc.com/view.asp?symbol={}&uid=stocks/financials{}"
+SHEETS = {
+    "Balance Sheet": "",
+    "Income Statement": "&view=incomeStatement",
+    "Cash Flow Statement": "&view=cashFlowStatement"
+}
+
+
 class Parser:
     """ Parse financial sheet webpages for financial sheet data
 """
-    def __init__(self, *, report):
+    def __init__(self, ticker, *, report, sheet):
+        self.ticker = ticker
+
         report = report.lower()
-        if report not in ["annual", "quarter"]:
+        report_aliases = {
+            "annual": ["a"], "quarter": ["q"]
+        }
+        self.report = ""
+        for alias in report_aliases:
+            if report == alias or report in report_aliases[alias]:
+                self.report = alias
+                break
+        if not self.report:
             raise self.UnknownReportTypeError(report)
-        self.report = report
+
+        sheet = sheet.lower()
+        sheet_aliases = {
+            "Balance Sheet": ["balance", "bs"],
+            "Income Statement": ["income", "is"],
+            "Cash Flow Statement": ["cash flow", "cf"]
+        }
+        self.sheet = ""
+        for alias in sheet_aliases:
+            if sheet == alias or sheet in sheet_aliases[alias]:
+                self.sheet = alias
+                break
+        if not self.sheet:
+            raise self.UnknownSheetTypeError(sheet)
+
+        self.address = URL.format(
+            self.ticker, SHEETS[self.sheet]
+        )
+        self.container = "containerYr" if self.report == "annual" else "containerQtr"
+
+        res = urlopen(self.address)
+        htmlparser = etree.HTMLParser()
+        self.tree = etree.parse(res, htmlparser)
 
     class UnknownReportTypeError(Exception):
 
         def __init__(self, report):
             self.report = report
-            self.message = f"No financial sheet '{self.report}'"
+            self.message = f"No financial report '{self.report}'"
+            super().__init__(self.message)
+
+    class UnknownSheetTypeError(Exception):
+
+        def __init__(self, sheet):
+            self.sheet = sheet
+            self.message = f"No financial report sheet '{self.sheet}'"
             super().__init__(self.message)
