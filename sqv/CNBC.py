@@ -63,7 +63,10 @@ class Parser:
         self.address = URL.format(
             self.ticker, SHEETS[self.sheet]
         )
-        self.container = "containerYr" if self.report == "annual" else "containerQtr"
+        if self.report == "annual":
+            self.table = "financialReportYr"
+        else:
+            self.table = "financialReportQtr"
 
         res = requests.get(self.address)
         self.soup = bs4.BeautifulSoup(res.text, features="lxml")
@@ -85,27 +88,14 @@ class Parser:
             super().__init__(self.message)
 
     def parse(self):
-        dbconnection = db.DBConnection(self.dbpath)
-        query = f"""
-        CREATE TABLE IF NOT EXISTS {self.report.title()}(
-            name TEXT PRIMARY KEY
-        );
-        """
-        dbconnection.write_query(query)
         timeperiods = self.dates()
-        for tp in timeperiods:
-            query = f"""
-            ALTER TABLE {self.ticker.title()}
-            ADD COLUMN {tp[0]} FLOAT DEFAULT 0
-            """
-            dbconnection.write_query(query)
+        labels = self.labels()
 
     def dates(self):
         """ Retrieve dates from financial report sheet
 """
-        selector = f"table[id='{self.container}'] thead th"
+        selector = f"table[id='{self.table}'] thead th"
         elems = self.soup.select(selector)[1:]
-        texts = [e.getText().strip() for e in elems]
         if self.report == "annual":
             regex = re.compile(
                 r"([0-9]{4})([0-9]{1,2}/[0-9]{1,2}/[0-9]{2})"
@@ -116,6 +106,14 @@ class Parser:
             )
         timeperiods = [
             (regex.search(t).group(1), regex.search(t).group(2))
-            for t in texts
+            for t in [e.getText().strip() for e in elems]
         ]
         return timeperiods
+
+    def labels(self):
+        """ Retrieve labels from financial report sheet
+"""
+        selector = f"table[id='{self.table}'] tr td[class='label']"
+        elems = self.soup.select(selector)
+        labels = [e.getText().strip() for e in elems]
+        return labels

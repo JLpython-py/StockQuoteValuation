@@ -15,12 +15,12 @@ class TestClassParser(unittest.TestCase):
         res = requests.get(url)
         self.soup = bs4.BeautifulSoup(res.text, features="lxml")
 
-    def test_dates_css_selectors(self):
+    def test_dates_css_selector(self):
         selector = "table[id='financialReportYr'] thead th"
         elems = self.soup.select(selector)[1:]
-        texts = [e.getText().strip() for e in elems]
-        self.assertIsInstance(texts, list)
-        self.assertTrue(all([isinstance(t, str) for t in texts]))
+        timeperiods = [e.getText().strip() for e in elems]
+        self.assertTrue(timeperiods)
+        self.assertTrue(all([isinstance(t, str) for t in timeperiods]))
 
     def test_dates_annual_regex(self):
         cases = [
@@ -43,6 +43,15 @@ class TestClassParser(unittest.TestCase):
         )
         self.assertTrue(
             all([regex.search(c) for c in cases])
+        )
+
+    def test_labels_css_selector(self):
+        selector = f"table[id='financialReportYr'] tbody tr td[class='label']"
+        elems = self.soup.select(selector)
+        labels = [e.getText().strip() for e in elems]
+        self.assertTrue(labels)
+        self.assertTrue(
+            all([isinstance(t, str) for t in labels])
         )
 
 

@@ -38,16 +38,11 @@ class TestCNBCParser(unittest.TestCase):
             all([isinstance(tp, tuple) for tp in timeperiods])
         )
 
-
-class TestCNBCModule(unittest.TestCase):
-
-    def setUp(self):
-        self.ticker = "AAPL"
-        self.parser = Parser(self.ticker, report="annual", sheet="Balance Sheet")
-
-    def tearDown(self):
-        os.remove(
-            os.path.join("data", "CNBC", f"{self.ticker}.sqlite")
+        # Call `labels` classmethod
+        labels = self.parser.labels()
+        self.assertIsInstance(labels, list)
+        self.assertTrue(
+            all([isinstance(label, str) for label in labels])
         )
 
 
