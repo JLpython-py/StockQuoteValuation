@@ -18,7 +18,7 @@ class TestCNBCModuleErrors(unittest.TestCase):
             Parser(ticker="AAPL", report="annual", sheet="")
 
 
-class TestCNBCModule(unittest.TestCase):
+class TestCNBCParser(unittest.TestCase):
 
     def test_parser(self):
         reports = ["annual", "quarter"]
@@ -36,6 +36,18 @@ class TestCNBCModule(unittest.TestCase):
         self.assertIsInstance(timeperiods, list)
         self.assertTrue(
             all([isinstance(tp, tuple) for tp in timeperiods])
+        )
+
+
+class TestCNBCModule(unittest.TestCase):
+
+    def setUp(self):
+        self.ticker = "AAPL"
+        self.parser = Parser(self.ticker, report="annual", sheet="Balance Sheet")
+
+    def tearDown(self):
+        os.remove(
+            os.path.join("data", "CNBC", f"{self.ticker}.sqlite")
         )
 
 
