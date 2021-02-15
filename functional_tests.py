@@ -26,10 +26,17 @@ class TestCNBCModule(unittest.TestCase):
         for rep in reports:
             for sheet in sheets:
                 parser = Parser(ticker="AAPL", report=rep, sheet=sheet)
-                self.assertIsNotNone(parser.tree)
+                self.assertIsNotNone(parser.soup)
 
-        # Create sqv.CNBC.Parser object
+        # Create `Parser` object
         self.parser = Parser(ticker="AAPL", report="a", sheet="bs")
+
+        # Call `dates` classmethod
+        timeperiods = self.parser.dates()
+        self.assertIsInstance(timeperiods, list)
+        self.assertTrue(
+            all([isinstance(tp, tuple) for tp in timeperiods])
+        )
 
 
 if __name__ == "__main__":

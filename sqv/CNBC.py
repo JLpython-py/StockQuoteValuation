@@ -6,9 +6,10 @@
 """
 
 import logging
-from urllib.request import urlopen
+import re
 
-from lxml import etree
+import bs4
+import requests
 
 logging.basicConfig(
     level=logging.INFO,
@@ -61,9 +62,8 @@ class Parser:
         )
         self.container = "containerYr" if self.report == "annual" else "containerQtr"
 
-        res = urlopen(self.address)
-        htmlparser = etree.HTMLParser()
-        self.tree = etree.parse(res, htmlparser)
+        res = requests.get(self.address)
+        self.soup = bs4.BeautifulSoup(res.text, features="lxml")
 
     class UnknownReportTypeError(Exception):
 
@@ -78,3 +78,25 @@ class Parser:
             self.sheet = sheet
             self.message = f"No financial report sheet '{self.sheet}'"
             super().__init__(self.message)
+
+    def dates(self):
+        """ Retrieve dates from financial report sheet
+"""
+        selector = "table[id='financialReportYr'] thead th"
+        elems = self.soup.select(selector)[1:]
+        texts = [e.getText().strip() for e in elems]
+        if self.report == "annual":
+            regex = re.compile(
+                r"([0-9]{4})([0-9]{1,2}/[0-9]{1,2}/[0-9]{2})"
+            )
+        elif self.report == "quarter":
+            regex = re.compile(
+                r"([0-9]{4} Q[1-4])([0-9]{1,2}/[0-9]{1,2}/[0-9]{2})"
+            )
+        else:
+            return
+        timeperiods = [
+            (regex.search(t).group(1), regex.search(t).group(2))
+            for t in texts
+        ]
+        return timeperiods
