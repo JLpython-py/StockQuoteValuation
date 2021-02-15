@@ -18,9 +18,9 @@ logging.basicConfig(
 
 URL = "https://apps.cnbc.com/view.asp?symbol={}&uid=stocks/financials{}"
 SHEETS = {
-    "Balance Sheet": "",
-    "Income Statement": "&view=incomeStatement",
-    "Cash Flow Statement": "&view=cashFlowStatement"
+    "balance sheet": "",
+    "income statement": "&view=incomeStatement",
+    "cash flow statement": "&view=cashFlowStatement"
 }
 
 
@@ -44,9 +44,9 @@ class Parser:
 
         sheet = sheet.lower()
         sheet_aliases = {
-            "Balance Sheet": ["balance", "bs"],
-            "Income Statement": ["income", "is"],
-            "Cash Flow Statement": ["cash flow", "cf"]
+            "balance sheet": ["balance", "bs"],
+            "income statement": ["income", "is"],
+            "cash flow statement": ["cash flow", "cf"]
         }
         self.sheet = ""
         for alias in sheet_aliases:

@@ -20,11 +20,16 @@ class TestCNBCModuleErrors(unittest.TestCase):
 
 class TestCNBCModule(unittest.TestCase):
 
-    def test_module(self):
+    def test_parser(self):
+        reports = ["annual", "quarter"]
+        sheets = ["Balance Sheet", "Income Statement", "Cash Flow Statement"]
+        for rep in reports:
+            for sheet in sheets:
+                parser = Parser(ticker="AAPL", report=rep, sheet=sheet)
+                self.assertIsNotNone(parser.tree)
+
         # Create sqv.CNBC.Parser object
         self.parser = Parser(ticker="AAPL", report="a", sheet="bs")
-        self.assertEqual(self.parser.container, "containerYr")
-        self.assertIsNotNone(self.parser.tree)
 
 
 if __name__ == "__main__":
