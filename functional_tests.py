@@ -38,11 +38,11 @@ class TestCNBCParser(unittest.TestCase):
             all([isinstance(tp, tuple) for tp in timeperiods])
         )
 
-        # Call `labels` classmethod
-        labels = self.parser.labels()
-        self.assertIsInstance(labels, list)
+        # Call `content` classmethod
+        content = self.parser.content()
+        self.assertIsInstance(content, dict)
         self.assertTrue(
-            all([isinstance(label, str) for label in labels])
+            all([isinstance(v, list) for v in content.values()])
         )
 
 

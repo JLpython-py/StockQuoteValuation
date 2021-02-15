@@ -45,14 +45,19 @@ class TestClassParser(unittest.TestCase):
             all([regex.search(c) for c in cases])
         )
 
-    def test_labels_css_selector(self):
-        selector = f"table[id='financialReportYr'] tbody tr td[class='label']"
-        elems = self.soup.select(selector)
-        labels = [e.getText().strip() for e in elems]
-        self.assertTrue(labels)
-        self.assertTrue(
-            all([isinstance(t, str) for t in labels])
-        )
+    def test_content_css_selector(self):
+        selector = "table[id='financialReportYr'] tbody tr"
+        rows = self.soup.select(selector)
+        self.assertTrue(rows)
+        for row in rows:
+            elems = [e.getText() for e in row.select("td")]
+            self.assertTrue(elems)
+            label, values = elems[0], elems[1:]
+            self.assertIsInstance(label, str)
+            self.assertIsInstance(values, list)
+            self.assertTrue(
+                all([isinstance(v, str) for v in values])
+            )
 
 
 if __name__ == "__main__":

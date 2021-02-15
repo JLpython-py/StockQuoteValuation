@@ -89,7 +89,7 @@ class Parser:
 
     def parse(self):
         timeperiods = self.dates()
-        labels = self.labels()
+        content = self.content()
 
     def dates(self):
         """ Retrieve dates from financial report sheet
@@ -110,10 +110,14 @@ class Parser:
         ]
         return timeperiods
 
-    def labels(self):
-        """ Retrieve labels from financial report sheet
+    def content(self):
+        """ Retrieve content from financial report sheet
 """
-        selector = f"table[id='{self.table}'] tr td[class='label']"
-        elems = self.soup.select(selector)
-        labels = [e.getText().strip() for e in elems]
-        return labels
+        selector = f"table[id='{self.table}'] tbody tr"
+        rows = self.soup.select(selector)
+        content = {}
+        for row in rows:
+            elems = [e.getText() for e in row.select("td")]
+            label, values = elems[0], elems[1:]
+            content.setdefault(label, values)
+        return content
