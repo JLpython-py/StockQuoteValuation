@@ -6,9 +6,9 @@ import unittest
 from sqv.CNBC import *
 
 
-class TestCNBCModule(unittest.TestCase):
+class TestCNBCModuleErrors(unittest.TestCase):
 
-    def test_parser(self):
+    def test_parser_errors(self):
         # Raise sqv.CNBC.Parser.UnknownReportTypeError
         with self.assertRaises(Parser.UnknownReportTypeError):
             Parser(ticker="AAPL", report="", sheet="Balance Sheet")
@@ -16,6 +16,15 @@ class TestCNBCModule(unittest.TestCase):
         # Raise sqv.CNBC.Parser.UnknownSheetTypeError
         with self.assertRaises(Parser.UnknownSheetTypeError):
             Parser(ticker="AAPL", report="annual", sheet="")
+
+
+class TestCNBCModule(unittest.TestCase):
+
+    def test_module(self):
+        # Create sqv.CNBC.Parser object
+        self.parser = Parser(ticker="AAPL", report="a", sheet="bs")
+        self.assertEqual(self.parser.container, "containerYr")
+        self.assertIsNotNone(self.parser.tree)
 
 
 if __name__ == "__main__":
