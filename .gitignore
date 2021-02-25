@@ -1,6 +1,5 @@
-virtualenv/
-.idea/
-sqv/__pycache__/
-geckodriver.log
-CompanyValuation.py
 __pycache__/
+.idea/
+geckodriver.log
+virtualenv/
+CompanyValuation.py

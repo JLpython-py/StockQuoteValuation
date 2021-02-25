@@ -1,2 +1,13 @@
+beautifulsoup4==4.9.3
+certifi==2020.12.5
+chardet==4.0.0
+et-xmlfile==1.0.1
+fuzzywuzzy==0.18.0
+idna==2.10
+jdcal==1.4.1
+lxml==4.6.2
+python-Levenshtein-wheels==0.13.2
+requests==2.25.1
 selenium==3.141.0
+soupsieve==2.2
 urllib3==1.26.3
