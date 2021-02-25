@@ -29,7 +29,7 @@ class TestCNBCParser(unittest.TestCase):
                 self.assertIsNotNone(parser.soup)
 
         # Create `Parser` object
-        self.parser = Parser(ticker="AAPL", report="a", sheet="bs")
+        self.parser = Parser(ticker="AAPL")
 
         # Call `dates` classmethod
         timeperiods = self.parser.dates()
@@ -40,9 +40,15 @@ class TestCNBCParser(unittest.TestCase):
 
         # Call `content` classmethod
         content = self.parser.content()
-        self.assertIsInstance(content, dict)
+        self.assertIsInstance(content, dict, content)
         self.assertTrue(
-            all([isinstance(v, list) for v in content.values()])
+            all([isinstance(v, list)
+                 for v in content.values()])
+        )
+        self.assertTrue(
+            all([isinstance(i, float) or i == '--'
+                 for r in content.values()
+                 for i in r]),
         )
 
 

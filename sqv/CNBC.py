@@ -12,8 +12,6 @@ import re
 import bs4
 import requests
 
-from db import db
-
 logging.basicConfig(
     level=logging.INFO,
     format=" %(asctime)s - %(levelname)s - %(message)s"
@@ -31,7 +29,7 @@ SHEETS = {
 class Parser:
     """ Parse financial sheet webpages for financial sheet data
 """
-    def __init__(self, ticker, *, report, sheet):
+    def __init__(self, ticker, *, report="a", sheet="bs"):
         self.ticker = ticker
 
         report = report.lower()
@@ -64,12 +62,12 @@ class Parser:
             self.ticker, SHEETS[self.sheet]
         )
         if self.report == "annual":
-            self.table = "financialReportYr"
+            self.cont = "containerYr"
         else:
-            self.table = "financialReportQtr"
+            self.cont = "containerQtr"
 
-        res = requests.get(self.address)
-        self.soup = bs4.BeautifulSoup(res.text, features="lxml")
+        self.res = requests.get(self.address)
+        self.soup = bs4.BeautifulSoup(self.res.text, features="lxml")
 
         self.dbpath = os.path.join("data", "CNBC", f"{self.ticker.upper()}.sqlite")
 
@@ -90,11 +88,16 @@ class Parser:
     def parse(self):
         timeperiods = self.dates()
         content = self.content()
+        for con in content:
+            content[con] = dict(zip(
+                [tp[0] for tp in timeperiods], content[con]
+            ))
+        return content
 
     def dates(self):
         """ Retrieve dates from financial report sheet
 """
-        selector = f"table[id='{self.table}'] thead th"
+        selector = f"div[id='{self.cont}'] thead th"
         elems = self.soup.select(selector)[1:]
         if self.report == "annual":
             regex = re.compile(
@@ -113,11 +116,45 @@ class Parser:
     def content(self):
         """ Retrieve content from financial report sheet
 """
-        selector = f"table[id='{self.table}'] tbody tr"
+        selector = f"div[id='{self.cont}'] tbody tr"
         rows = self.soup.select(selector)
         content = {}
         for row in rows:
             elems = [e.getText() for e in row.select("td")]
             label, values = elems[0], elems[1:]
+            values = self.reformat_values(label, values)
             content.setdefault(label, values)
         return content
+
+    def reformat_values(self, label, values):
+        currency, factor = self.get_value_information()
+        paren_regex = re.compile(r"\(([0-9,]+)\)")
+        grand_regex = re.compile(r"(-?[0-9,]+)K")
+        for ind, val in enumerate(values):
+            if val == '--':
+                continue
+            if paren_regex.search(val):
+                val = f"-{paren_regex.search(val).group(1)}"
+            if grand_regex.search(val):
+                val = float(''.join(val.split(','))) * 1e3
+            elif "Earning per Common Share" in label:
+                val = float(''.join(val.split(',')))
+            else:
+                val = float(''.join(val.split(','))) * factor
+            values[ind] = val
+        return values
+
+    def get_value_information(self):
+        currency_regex = re.compile(
+            r"In (.*)<br />"
+        )
+        scale_regex = re.compile(
+            r"Values are displayed in (.*) except for earnings per share and where noted"
+        )
+        currency = currency_regex.search(self.res.text).group(1)
+        scale = scale_regex.search(self.res.text).group(1)
+        numerical = {
+            "thousands": 1e3, "millions": 1e6
+        }
+        factor = numerical[scale.lower()]
+        return currency, factor

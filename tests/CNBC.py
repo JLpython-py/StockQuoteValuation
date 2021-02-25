@@ -8,15 +8,24 @@ import bs4
 import requests
 
 
+TICKER = "AAPL"
+SHEETS = {
+    "balance sheet": "",
+    "income statement": "&view=incomeStatement",
+    "cash flow statement": "&view=cashFlowStatement"
+}
+EXT = SHEETS["balance sheet"]
+
+
 class TestClassParser(unittest.TestCase):
 
     def setUp(self):
-        url = "https://apps.cnbc.com/view.asp?symbol=AAPL&uid=stocks/financials&view=incomeStatement"
-        res = requests.get(url)
-        self.soup = bs4.BeautifulSoup(res.text, features="lxml")
+        url = f"https://apps.cnbc.com/view.asp?symbol={TICKER}&uid=stocks/financials{EXT}"
+        self.res = requests.get(url)
+        self.soup = bs4.BeautifulSoup(self.res.text, features="lxml")
 
     def test_dates_css_selector(self):
-        selector = "table[id='financialReportYr'] thead th"
+        selector = "div[id='containerYr'] thead th"
         elems = self.soup.select(selector)[1:]
         timeperiods = [e.getText().strip() for e in elems]
         self.assertTrue(timeperiods)
@@ -46,7 +55,7 @@ class TestClassParser(unittest.TestCase):
         )
 
     def test_content_css_selector(self):
-        selector = "table[id='financialReportYr'] tbody tr"
+        selector = "div[id='containerYr'] tbody tr"
         rows = self.soup.select(selector)
         self.assertTrue(rows)
         for row in rows:
@@ -58,6 +67,40 @@ class TestClassParser(unittest.TestCase):
             self.assertTrue(
                 all([isinstance(v, str) for v in values])
             )
+
+    def test_reformat_values_regex(self):
+        paren_regex = re.compile(r"\(([0-9,]+)\)")
+        cases = ["(2,252)", "(1,291)", "(245)"]
+        for case in cases:
+            self.assertTrue(paren_regex.search(case))
+
+    def test_get_value_information_regex(self):
+        self.assertIn(
+            "() = Negative Values", self.res.text
+        )
+        self.assertIn(
+            "In U.S. Dollars", self.res.text
+        )
+        self.assertIn(
+            "Values are displayed in Millions except for earnings per share and where noted",
+            self.res.text
+        )
+        currency_regex = re.compile(
+            r"In (.*)<br />"
+        )
+        scale_regex = re.compile(
+            r"Values are displayed in (.*) except for earnings per share and where noted"
+        )
+        self.assertTrue(currency_regex.search(self.res.text))
+        self.assertTrue(scale_regex.search(self.res.text))
+        self.assertEqual(
+            currency_regex.search(self.res.text).group(1),
+            "U.S. Dollars"
+        )
+        self.assertEqual(
+            scale_regex.search(self.res.text).group(1),
+            "Millions"
+        )
 
 
 if __name__ == "__main__":
