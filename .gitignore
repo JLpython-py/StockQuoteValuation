@@ -2,3 +2,5 @@ virtualenv/
 .idea/
 sqv/__pycache__/
 geckodriver.log
+CompanyValuation.py
+__pycache__/
