@@ -3,20 +3,33 @@
 
 import unittest
 
-from sqv.CNBC import *
-import sqv.ticker
+from sqv import CNBC
+from sqv import ticker
+from sqv import YahooFinance
 
 
 class TestCNBCModuleErrors(unittest.TestCase):
 
     def test_parser_errors(self):
-        # Raise sqv.CNBC.Parser.UnknownReportTypeError
-        with self.assertRaises(Parser.UnknownReportTypeError):
-            Parser(ticker="AAPL", report="", sheet="Balance Sheet")
+        # Raise CNBC.Parser.UnknownReportTypeError
+        with self.assertRaises(CNBC.Parser.UnknownReportTypeError):
+            CNBC.Parser("AAPL", report="", sheet="Balance Sheet")
 
-        # Raise sqv.CNBC.Parser.UnknownSheetTypeError
-        with self.assertRaises(Parser.UnknownSheetTypeError):
-            Parser(ticker="AAPL", report="annual", sheet="")
+        # Raise CNBC.Parser.UnknownSheetTypeError
+        with self.assertRaises(CNBC.Parser.UnknownSheetTypeError):
+            CNBC.Parser("AAPL", report="annual", sheet="")
+
+
+class TestYahooFinanceModuleErrors(unittest.TestCase):
+
+    def test_parser_errors(self):
+        # Raise YahooFinance.Parser.UnknownReportTypeError
+        with self.assertRaises(YahooFinance.Parser.UnknownReportTypeError):
+            YahooFinance.Parser("AAPL", report="", sheet="Balance Sheet")
+
+        # Raise YahooFinance.Parser.UnknownSheetTypeError
+        with self.assertRaises(YahooFinance.Parser.UnknownSheetTypeError):
+            YahooFinance.Parser("AAPL", report="annual", sheet="")
 
 
 class TestCNBCParser(unittest.TestCase):
@@ -26,11 +39,11 @@ class TestCNBCParser(unittest.TestCase):
         sheets = ["Balance Sheet", "Income Statement", "Cash Flow Statement"]
         for rep in reports:
             for sheet in sheets:
-                parser = Parser(ticker="AAPL", report=rep, sheet=sheet)
+                parser = CNBC.Parser("AAPL", report=rep, sheet=sheet)
                 self.assertIsNotNone(parser.soup)
 
         # Create `Parser` object
-        self.parser = Parser(ticker="AAPL")
+        self.parser = CNBC.Parser("AAPL")
 
         # Call `dates` classmethod
         timeperiods = self.parser.dates()
@@ -53,10 +66,31 @@ class TestCNBCParser(unittest.TestCase):
         )
 
 
+class TestYahooFinanceParser(unittest.TestCase):
+
+    def test_parser(self):
+        reports = ["annual", "quarter"]
+        sheets = ["Balance Sheet", "Income Statement", "Cash Flow Statement"]
+        for rep in reports:
+            for sheet in sheets:
+                parser = YahooFinance.Parser("AAPL", report=rep, sheet=sheet)
+                self.assertIsNotNone(parser.tree)
+
+        # Create `Parser` object
+        self.parser = YahooFinance.Parser("AAPL")
+
+        # Call `dates` classmethod
+        timeperiods = self.parser.dates()
+        self.assertIsInstance(timeperiods, list)
+        self.assertTrue(
+            all([isinstance(tp, str) for tp in timeperiods])
+        )
+
+
 class TestSeleniumTickerSearch(unittest.TestCase):
 
     def setUp(self):
-        self.ticker = sqv.ticker.SeleniumTickerSearch()
+        self.ticker = ticker.SeleniumTickerSearch()
         self.original_address = self.ticker.browser.current_url
 
     def tearDown(self):
@@ -64,21 +98,21 @@ class TestSeleniumTickerSearch(unittest.TestCase):
 
     def test_selenium_ticker_search(self):
         # Invalid <country>, <security> arguments cannot be used to modify search
-        with self.assertRaises(sqv.ticker.SeleniumTickerSearch.OptionNotFoundError):
+        with self.assertRaises(ticker.SeleniumTickerSearch.OptionNotFoundError):
             self.ticker.search(name="Apple", country="Nonexistent option")
         self.ticker.reset()
-        with self.assertRaises(sqv.ticker.SeleniumTickerSearch.OptionNotFoundError):
+        with self.assertRaises(ticker.SeleniumTickerSearch.OptionNotFoundError):
             self.ticker.search(name="Apple", security="Nonexistent option")
         self.ticker.reset()
 
         # Search query with no results
-        with self.assertRaises(sqv.ticker.SeleniumTickerSearch.ParsingError):
+        with self.assertRaises(ticker.SeleniumTickerSearch.ParsingError):
             self.ticker.search(name="abcdefghijklmnopqrstuvwxyz")
             self.ticker.retrieve()
         self.ticker.reset()
 
         # Searching with ticker results in page which cannot be parsed
-        with self.assertRaises(sqv.ticker.SeleniumTickerSearch.ParsingError):
+        with self.assertRaises(ticker.SeleniumTickerSearch.ParsingError):
             self.ticker.search(name="AAPL")
             self.ticker.retrieve()
         self.ticker.reset()
@@ -121,22 +155,22 @@ class TestSeleniumTickerSearch(unittest.TestCase):
 class TestTickerSearch(unittest.TestCase):
 
     def setUp(self):
-        self.ticker = sqv.ticker.TickerSearch()
+        self.ticker = ticker.TickerSearch()
 
     def test_ticker_search(self):
         # Invalid <country>, <security> arguments cannot be used to modify search
-        with self.assertRaises(sqv.ticker.TickerSearch.OptionNotFoundError):
+        with self.assertRaises(ticker.TickerSearch.OptionNotFoundError):
             self.ticker.search(name="Apple", country="Nonexistent option")
-        with self.assertRaises(sqv.ticker.TickerSearch.OptionNotFoundError):
+        with self.assertRaises(ticker.TickerSearch.OptionNotFoundError):
             self.ticker.search(name="Apple", security="Nonexistent option")
 
         # Search query with no results
-        with self.assertRaises(sqv.ticker.TickerSearch.ParsingError):
+        with self.assertRaises(ticker.TickerSearch.ParsingError):
             self.ticker.search(name="abcdefghijklmnopqrstuvwxyz")
             self.ticker.retrieve()
 
         # Searching with ticker results in page which cannot be parsed
-        with self.assertRaises(sqv.ticker.TickerSearch.ParsingError):
+        with self.assertRaises(ticker.TickerSearch.ParsingError):
             self.ticker.search(name="AAPL")
             self.ticker.retrieve()
 

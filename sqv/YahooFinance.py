@@ -6,8 +6,9 @@
 """
 
 import logging
-import bs4
-import requests
+from urllib.request import urlopen
+
+from lxml import etree
 
 logging.basicConfig(
     level=logging.INFO,
@@ -59,8 +60,9 @@ class Parser:
             self.ticker, SHEETS[self.sheet], self.ticker
         )
 
-        self.res = requests.get(self.address)
-        self.soup = bs4.BeautifulSoup(self.res.text, features="lxml")
+        response = urlopen(self.address)
+        htmlparser = etree.HTMLParser()
+        self.tree = etree.parse(response, htmlparser)
 
     class UnknownReportTypeError(Exception):
 
@@ -75,3 +77,12 @@ class Parser:
             self.sheet = sheet
             self.message = f"No financial report sheet '{self.sheet}'"
             super().__init__(self.message)
+
+    def parse(self):
+        timeperiods = self.dates()
+
+    def dates(self):
+        xpath = "//div[@class='D(tbhg)']//div//div//span"
+        elems = self.tree.xpath(xpath)[1:]
+        timeperiods = [e.text.strip() for e in elems]
+        return timeperiods
